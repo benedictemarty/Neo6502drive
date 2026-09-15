@@ -31,6 +31,24 @@ Avantages : un seul câble, pas d'interrupteur de configuration, débit USB
 full-speed (12 Mbit/s) bien supérieur à l'UART. Inconvénient : fork du
 firmware tant que l'amont ne l'intègre pas.
 
+## Modem Wi-Fi (EPIC-02, sprint 1) — Pico W
+
+```
+ Neo6502 UEXT (UART 115200) ──┐                     ┌─ Wi-Fi (CYW43, lwIP : DHCP, DNS, TCP, SNTP, ICMP)
+                              ├─ Pico W picow-modem ─┤
+ Neo6502 USB-A (après F-13) ──┘   USB CDC-ACM       └─ flash : SSID, IP, DNS, SNTP, écoute
+      / PC pour les tests
+```
+
+`src/at_modem.c` (portable, testé sur PC) interprète deux dialectes sur le
+même flux : AT ESP8266 (netsetup/netinfo/prophet) et Hayes (ATDT, +++,
+ATH, ATA, RING). Les octets reçus du réseau passent par un tampon circulaire
+de 8 Ko rempli depuis les rappels lwIP (en interruption) et vidé dans la
+boucle principale, en trames `+IPD,n:` (mode commande) ou brutes (mode en
+ligne) ; quand le tampon est plein, le rappel lwIP rend `ERR_MEM` et lwIP
+représente les données (contrôle de flux). Une seule connexion TCP
+(`CIPMUX=0`), pas de TLS. Détail : `firmware/picow-modem/README.md`.
+
 ## Mode bloc UEXT (v2)
 
 ```

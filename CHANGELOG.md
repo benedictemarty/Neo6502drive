@@ -5,7 +5,20 @@ versionnement SemVer.
 
 ## [Unreleased]
 
+### Ajouté
+- Sprint 1 (2026-09-15) : firmware `firmware/picow-modem/` — modem Wi-Fi sur
+  Raspberry Pi Pico W (US-T0, US-T1, US-T2) : dialecte AT ESP8266 relevé dans
+  les sources de neo-networking/neo-prophet (CWMODE, CWJAP, CWLAP, CIFSR,
+  CIPSTA, CIPDNS, CIPSTATUS, CIPSTART/SEND/CLOSE, +IPD, CIPSERVER, SNTP,
+  PING…), modem Hayes (ATDT, +++, ATO, ATH, ATA, RING, S0/S2/S12), transports
+  USB CDC-ACM et UART0 GP0/GP1 simultanés, configuration en flash ; cœur
+  portable testé sur PC (`make test`, 126 vérifications) ; `Makefile` racine
+  (`test`, `firmware`, `flash`) ; `hardware/PICOW_UEXT.md`.
+
 ### Modifié
+- EPIC-02 : matériel Pico W (décision PO) à la place du Pi Zero W ; sprint 1
+  réaffecté au modem Wi-Fi, prototype clé USB décalé en sprint 2, sprints
+  renumérotés ; architecture et README mis à jour.
 - Stories firmware (US-C1..C4, US-B3) déléguées au dépôt commun Neo6502firmware
   (F-00, F-13, F-20).
 

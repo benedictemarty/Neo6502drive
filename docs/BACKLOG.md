@@ -26,9 +26,10 @@ Priorité P1 > P2 > P3. État : À faire / En cours / Terminé (sprint).
 ## EPIC-02 — Télécom
 
 Principe : la **pile TCP/IP reste sur le périphérique** ; le 6502 voit un canal
-série (UART UEXT, puis CDC USB après EPIC-04). Matériel : Pi Zero W pour
-prototyper, puis Feather + AirLift ou Feather ESP32-S3. Une pile sur le 6502
-(Contiki/uIP, SLIP) n'est pas retenue.
+série (UART UEXT, puis CDC USB après EPIC-04). Matériel : **Raspberry Pi
+Pico W** (décision PO du 2026-09-15 : carte possédée, RP2040 + CYW43, Pico
+SDK), firmware `firmware/picow-modem/`. Le Pi Zero W n'est plus nécessaire
+pour la télécom. Une pile sur le 6502 (Contiki/uIP, SLIP) n'est pas retenue.
 
 Existant vérifié (gitlab.com/bocianu/neo-networking et neo-prophet) : la
 communauté utilise le MOD-WIFI-ESP8266 sur l'UEXT avec le **firmware AT
@@ -40,8 +41,9 @@ par ces programmes sans modification.
 
 | ID | P | User story | État |
 |----|---|------------|------|
-| US-T1 | P1 | En tant qu'utilisateur, je veux un **modem Hayes virtuel** sur le canal série : `AT`, `ATDT hôte:port` (TCP sortant, mode transparent, `+++` pour revenir en commande), `ATH`, `ATA` (écoute entrante), registres S de base, afin d'utiliser tout programme terminal / BBS / MUD écrit pour un modem. | À faire (S4) |
-| US-T2 | P1 | En tant qu'utilisateur, je veux que le périphérique accepte le **sous-ensemble AT ESP8266** utilisé par `netconfig`/`netinfo`/`prophet` (`AT+CWMODE`, `AT+CWJAP`, `AT+CWLAP`, `AT+CIFSR`, `AT+CIPSTART/SEND/CLOSE`, `AT+CIPMUX`…), afin de rester compatible avec les outils existants de la communauté (liste exacte à relever dans les sources de neo-networking). | À faire (S4) |
+| US-T0 | P1 | En tant que PO, je veux un **firmware Pico W** (Pico SDK, cyw43/lwIP, TinyUSB) exposant le modem sur **USB CDC et UART0 GP0/GP1** à la fois, afin de brancher la carte en UEXT dès maintenant et en USB après F-13. | Terminé (S1) — validation sur carte à consigner |
+| US-T1 | P1 | En tant qu'utilisateur, je veux un **modem Hayes virtuel** sur le canal série : `AT`, `ATDT hôte:port` (TCP sortant, mode transparent, `+++` pour revenir en commande), `ATH`, `ATA` (écoute entrante), registres S de base, afin d'utiliser tout programme terminal / BBS / MUD écrit pour un modem. | Terminé (S1) — tests PC ; carte à consigner |
+| US-T2 | P1 | En tant qu'utilisateur, je veux que le périphérique accepte le **sous-ensemble AT ESP8266** utilisé par `netsetup`/`netinfo`/`netconsole`/`prophet` (liste exacte relevée dans les sources : voir `firmware/picow-modem/README.md`), afin de rester compatible avec les outils existants de la communauté sans modification. | Terminé (S1) — tests PC ; carte à consigner |
 | US-T3 | P1 | En tant que développeur 6502, je veux un **proxy de sockets** binaire (commandes `$10-$1F` : open/read/write/close, DNS, statut, 4 connexions, non bloquant) et le driver ca65 `net.s`, afin d'écrire des programmes réseau sans parser de texte AT. | À faire (S4) |
 | US-T4 | P2 | En tant que développeur, je veux une **maquette réseau dans le simulateur Go** (le périphérique simulé ouvre de vraies sockets sur le PC) et des tests du driver assemblé, afin de valider sans matériel. | À faire (S4) |
 | US-T5 | P2 | En tant qu'utilisateur, je veux **envoyer un `.neo` depuis le PC en Wi-Fi** et l'exécuter (remplace le câble série `nxmit`), ou l'écrire dans l'image disque. | À faire |
@@ -49,9 +51,10 @@ par ces programmes sans modification.
 | US-T7 | P3 | En tant qu'utilisateur du Télémon, je veux un **serveur telnet entrant** pour piloter le moniteur depuis le PC, et `load`/`save` réseau. | À faire |
 | US-T8 | P3 | En tant qu'utilisateur, je veux un partage de fichiers réseau vers la SD/les images (Samba sur le Pi Zero W), afin de déposer des programmes sans manipuler la carte. | À faire |
 
-Ordre : US-T1 → US-T2 → US-T3/T4 → T5/T6 → T7/T8. Prototype sur Pi Zero W en
-UART UEXT dès la fin du sprint 1 (même carte que US-M0), portage Feather/ESP32
-ensuite, puis transport CDC (EPIC-04).
+Ordre : US-T0/T1/T2 (sprint 1, Pico W) → US-T3/T4 → T5/T6 → T7/T8. Transport
+UART UEXT immédiat, transport CDC USB dès que F-13 (Neo6502firmware) est
+livrée. Limites connues du firmware Pico W : pas de TLS (`AT+CIPSSLCCONF=1`
+→ `ERROR`), pas d'UDP, une connexion (`CIPMUX=0`), pas d'OTA.
 
 ## EPIC-03 — Périphérique sur le bus 6502 (connecteur BUS1)
 
@@ -103,6 +106,10 @@ ce projet n'en porte que les stories côté périphérique/driver.
 
 ## Questions ouvertes
 
+- Pico W : budget de courant du 3,3 V UEXT (alimenter le Pico W par USB en
+  attendant) ; brochage UEXT standard Olimex à confirmer sur le schéma rev. B1
+  (`hardware/PICOW_UEXT.md`) ; débit réel `+IPD` vers le tampon UART du
+  firmware Neo6502 à mesurer avec `pget.neo`.
 - Feather RP2040 USB Host : brochage PIO-USB (D+/D-), alimentation 5 V du port
   hôte, coexistence hôte PIO-USB + device natif ; à vérifier sur la doc Adafruit.
 - Changement d'image à chaud : le firmware Neo6502 gère-t-il une

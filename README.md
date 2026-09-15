@@ -15,9 +15,11 @@ Feather RP2040 USB Host**. Deux modes, complémentaires :
 Projet frère de [Neo6502kbd](../Neo6502kbd) (driver clavier), dont il réutilise
 les conventions (ca65, outil Go, simulateur, méthode agile).
 
-**État : cadrage (sprint 0) ; sprint 1 = mode MSC.** Aucun code n'est
-encore écrit ; voir
-[docs/VISION.md](docs/VISION.md) et [docs/BACKLOG.md](docs/BACKLOG.md).
+**État : sprint 1 (2026-09-15) — modem Wi-Fi sur Raspberry Pi Pico W**
+(`firmware/picow-modem/`, US-T0..T2 : AT ESP8266 compatible netsetup/prophet
++ modem Hayes, sur USB CDC et UART UEXT) ; validation sur carte en cours. Le
+mode MSC suit. Voir [docs/VISION.md](docs/VISION.md) et
+[docs/BACKLOG.md](docs/BACKLOG.md).
 
 ## Pourquoi
 
@@ -28,15 +30,19 @@ attendent des secteurs). Ce projet fournit ce périphérique, à la manière de
 [LOCI](https://github.com/sodiumlb/loci-firmware) pour l'Oric, mais adapté au
 Neo6502 (pas de bus d'extension 6502 : on passe par l'UEXT).
 
-## Arborescence prévue
+## Arborescence
 
 ```
-docs/       cadrage agile, protocole, notes vérifiées sur le Neo6502 et le Feather
-firmware/   firmware du Feather RP2040 USB Host (C, Pico SDK, TinyUSB device MSC + hôte PIO-USB)
-driver/     driver 6502 (ca65) : lecture/écriture de secteurs via UEXT
-tools/      outil Go : création/inspection d'images, simulateur du périphérique
-hardware/   câblage UEXT <-> Feather, nomenclature
+docs/                  cadrage agile, protocole, notes vérifiées sur le Neo6502 et le Feather
+firmware/picow-modem/  modem Wi-Fi sur Pico W (C, Pico SDK, cyw43/lwIP, TinyUSB CDC) + tests PC
+firmware/              (à venir) firmware du Feather RP2040 USB Host (MSC + hôte PIO-USB)
+driver/                driver 6502 (ca65) : lecture/écriture de secteurs via UEXT
+tools/                 outil Go : création/inspection d'images, simulateur du périphérique
+hardware/              câblage UEXT <-> Pico W / Feather, nomenclature
 ```
+
+`make test` (tests PC), `make firmware` (`PICO_SDK_PATH` requis), `make flash`
+(Pico W en BOOTSEL).
 
 ## Documentation
 
@@ -46,6 +52,8 @@ hardware/   câblage UEXT <-> Feather, nomenclature
 - [docs/DEFINITION_OF_DONE.md](docs/DEFINITION_OF_DONE.md)
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — architecture et protocole (proposition)
 - [docs/NEO6502_UEXT_NOTES.md](docs/NEO6502_UEXT_NOTES.md) — faits vérifiés dans le firmware Neo6502
+- [firmware/picow-modem/README.md](firmware/picow-modem/README.md) — modem Wi-Fi Pico W : commandes AT, compilation
+- [hardware/PICOW_UEXT.md](hardware/PICOW_UEXT.md) — câblage Pico W ↔ Neo6502
 - [CHANGELOG.md](CHANGELOG.md)
 
 ## Licence
