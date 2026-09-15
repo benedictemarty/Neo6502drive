@@ -1,5 +1,24 @@
 # Architecture et protocole (proposition, sprint 0)
 
+## Mode MSC (v1) — clé USB virtuelle
+
+```
+ Neo6502 USB-A ─ hub ─┬─ clavier
+                      └─ Feather RP2040 USB Host (USB-C, TinyUSB *device* MSC)
+                              │ sert un volume = fichier image FATxx
+                              ├─ port USB-A hôte (PIO-USB, TinyUSB *host* MSC) : clé USB avec les images
+                              └─ (option) microSD FeatherWing
+```
+
+Le firmware Neo6502 monte le volume comme n'importe quelle clé (classe MSC,
+`usb_storage.cpp`). Le Feather sert les secteurs du fichier image sélectionné
+(callbacks `tud_msc_read10/write10`). Pour changer d'image : déconnexion USB
+logicielle (`tud_disconnect`), sélection, reconnexion. Contraintes vérifiées :
+seules les classes HID, MSC et hub sont acceptées côté Neo6502 ; une seule
+unité MSC (`CFG_TUH_MSC 1`), donc **une image visible à la fois**.
+
+## Mode bloc UEXT (v2)
+
 ```
  Neo6502 (65C02)                RP2040 Neo6502            Feather RP2040
  programme / Télémon            firmware officiel          Neo6502drive

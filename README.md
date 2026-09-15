@@ -1,15 +1,22 @@
 # Neo6502drive
 
 Disque dur et disquettes virtuels pour le **Neo6502**, à base d'**Adafruit
-Feather RP2040** branché sur le port **UEXT**. Le Feather expose un
-périphérique bloc (secteurs de 512 octets) dont les images vivent sur
-microSD, clé USB ou flash interne ; côté 6502, un driver en assembleur `ca65`
-lit et écrit des secteurs via l'API UEXT du firmware Neo6502.
+Feather RP2040 USB Host**. Deux modes, complémentaires :
+
+1. **Clé USB virtuelle (mode MSC)** — le Feather, branché par son USB-C sur
+   le port USB-A (hub) du Neo6502, se présente comme une clé USB FAT32 dont le
+   contenu est une image choisie parmi celles stockées sur la clé USB branchée
+   au port hôte du Feather (ou une microSD). Changement de « disquette » sur
+   le Feather, aucun driver 6502 : le firmware Neo6502 voit une clé ordinaire.
+2. **Périphérique bloc (mode UEXT)** — secteurs de 512 octets, plusieurs
+   unités, driver `ca65` via l'API UEXT (UART puis SPI) ; extensible à
+   d'autres services (télécom).
 
 Projet frère de [Neo6502kbd](../Neo6502kbd) (driver clavier), dont il réutilise
 les conventions (ca65, outil Go, simulateur, méthode agile).
 
-**État : cadrage (sprint 0).** Aucun code n'est encore écrit ; voir
+**État : cadrage (sprint 0) ; sprint 1 = mode MSC.** Aucun code n'est
+encore écrit ; voir
 [docs/VISION.md](docs/VISION.md) et [docs/BACKLOG.md](docs/BACKLOG.md).
 
 ## Pourquoi
@@ -25,7 +32,7 @@ Neo6502 (pas de bus d'extension 6502 : on passe par l'UEXT).
 
 ```
 docs/       cadrage agile, protocole, notes vérifiées sur le Neo6502 et le Feather
-firmware/   firmware du Feather RP2040 (C, Pico SDK + TinyUSB)
+firmware/   firmware du Feather RP2040 USB Host (C, Pico SDK, TinyUSB device MSC + hôte PIO-USB)
 driver/     driver 6502 (ca65) : lecture/écriture de secteurs via UEXT
 tools/      outil Go : création/inspection d'images, simulateur du périphérique
 hardware/   câblage UEXT <-> Feather, nomenclature

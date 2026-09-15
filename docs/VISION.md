@@ -10,10 +10,12 @@ avec un driver 6502 minimal et des outils PC pour préparer les images.
 
 ## Objectifs
 
-1. Périphérique bloc simple : lire/écrire un secteur de 512 octets par numéro
-   (LBA), plusieurs « unités » (disque dur + disquettes) sélectionnables.
-2. Protocole documenté, indépendant du bus : d'abord UART (robuste, testable
-   depuis un PC), puis SPI (plus rapide) en option.
+1. **Mode MSC (v1)** : le Feather est vu par le Neo6502 comme une clé USB ;
+   il sert une image de volume FAT32 choisie sur le Feather parmi celles de sa
+   clé USB / microSD ; changement d'image à chaud (réénumération USB).
+2. **Mode bloc UEXT (v2)** : lire/écrire un secteur de 512 octets par LBA,
+   plusieurs unités ; protocole documenté, UART d'abord puis SPI ; réservé
+   `$10-$1F` pour d'autres services (télécom, EPIC-02).
 3. Driver ca65 réutilisable par le futur moniteur « Télémon » (Neo6502kbd,
    EPIC-01) et par tout programme.
 4. Qualité vérifiable sans matériel : simulateur du périphérique en Go et
@@ -25,6 +27,9 @@ avec un driver 6502 minimal et des outils PC pour préparer les images.
 
 - Émulation d'un contrôleur de disquette réel (WD179x, Disk II) : le Neo6502
   n'en a pas et aucun logiciel Neo6502 n'en attend.
+- Série ou protocole libre sur USB : le firmware Neo6502 n'accepte que les
+  classes HID, MSC et hub (`tusb_config.h` : `CFG_TUH_CDC 0`,
+  `CFG_TUH_VENDOR 0`).
 - Clone de LOCI pour Oric.
 - Système de fichiers côté 6502 (ce sera un projet/épopée distinct, au-dessus
   de ce périphérique bloc).
