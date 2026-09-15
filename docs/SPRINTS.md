@@ -26,9 +26,11 @@ Prérequis : Pico SDK + TinyUSB + Pico-PIO-USB.
 
 Candidats : US-01, US-02, US-03, US-04, US-10 (tout testable sans matériel).
 
-## Sprint 4 — « Firmware bloc, mesures, télécom »
+## Sprint 4 — « Télécom : modem Hayes et AT sur Pi Zero W »
 
-Candidats : US-05, US-11 ; puis EPIC-02 (proxy TCP).
+Stories : US-T1, US-T2, US-T3, US-T4 (Pi Zero W en UART UEXT, Python ;
+simulateur Go pour le driver). US-05/US-11 (firmware bloc Feather, mesures)
+glissent en sprint 4 bis selon disponibilité du matériel.
 
 ## Sprint 5 — « CDC dans le firmware » (EPIC-04)
 

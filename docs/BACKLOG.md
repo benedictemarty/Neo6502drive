@@ -23,15 +23,35 @@ Priorité P1 > P2 > P3. État : À faire / En cours / Terminé (sprint).
 | US-11 | P2 | En tant que développeur, je veux mesurer le débit réel (UART vs SPI) sur matériel et le consigner. | À faire |
 | US-12 | P3 | En tant qu'utilisateur du Télémon, je veux des commandes de chargement/sauvegarde par secteurs (intégration EPIC-01 de Neo6502kbd). | À faire |
 
-## EPIC-02 — Télécom (après le mode bloc UEXT)
+## EPIC-02 — Télécom
 
-Services réseau exposés au 6502 par le même protocole (commandes `$10-$1F`),
-la **pile TCP restant sur le périphérique** (proxy de sockets) : ouvrir/lire/
-écrire/fermer, DNS, NTP, téléchargement dans une image, pont série↔TCP.
-Matériel : Pi Zero W (Wi-Fi intégré, UART UEXT) pour prototyper ; AirLift
-FeatherWing ou Feather ESP32-S3 pour la version embarquée. Une vraie pile
-TCP/IP sur le 6502 (Contiki/uIP via cc65, SLIP sur l'UART) est possible mais
-lourde et lente : non retenue en première approche.
+Principe : la **pile TCP/IP reste sur le périphérique** ; le 6502 voit un canal
+série (UART UEXT, puis CDC USB après EPIC-04). Matériel : Pi Zero W pour
+prototyper, puis Feather + AirLift ou Feather ESP32-S3. Une pile sur le 6502
+(Contiki/uIP, SLIP) n'est pas retenue.
+
+Existant vérifié (gitlab.com/bocianu/neo-networking et neo-prophet) : la
+communauté utilise le MOD-WIFI-ESP8266 sur l'UEXT avec le **firmware AT
+d'Espressif** (`AT+CWMODE=1`, OTA), les outils `netconfig.neo`,
+`netconsole.neo`, `netinfo.neo`, et le client **Prophet** (`prophet.neo`,
+serveur public `mimuma.pl:8998`, commandes `cat/list/search/info/get`). Être
+**compatible avec ce jeu de commandes AT** rend nos périphériques utilisables
+par ces programmes sans modification.
+
+| ID | P | User story | État |
+|----|---|------------|------|
+| US-T1 | P1 | En tant qu'utilisateur, je veux un **modem Hayes virtuel** sur le canal série : `AT`, `ATDT hôte:port` (TCP sortant, mode transparent, `+++` pour revenir en commande), `ATH`, `ATA` (écoute entrante), registres S de base, afin d'utiliser tout programme terminal / BBS / MUD écrit pour un modem. | À faire (S4) |
+| US-T2 | P1 | En tant qu'utilisateur, je veux que le périphérique accepte le **sous-ensemble AT ESP8266** utilisé par `netconfig`/`netinfo`/`prophet` (`AT+CWMODE`, `AT+CWJAP`, `AT+CWLAP`, `AT+CIFSR`, `AT+CIPSTART/SEND/CLOSE`, `AT+CIPMUX`…), afin de rester compatible avec les outils existants de la communauté (liste exacte à relever dans les sources de neo-networking). | À faire (S4) |
+| US-T3 | P1 | En tant que développeur 6502, je veux un **proxy de sockets** binaire (commandes `$10-$1F` : open/read/write/close, DNS, statut, 4 connexions, non bloquant) et le driver ca65 `net.s`, afin d'écrire des programmes réseau sans parser de texte AT. | À faire (S4) |
+| US-T4 | P2 | En tant que développeur, je veux une **maquette réseau dans le simulateur Go** (le périphérique simulé ouvre de vraies sockets sur le PC) et des tests du driver assemblé, afin de valider sans matériel. | À faire (S4) |
+| US-T5 | P2 | En tant qu'utilisateur, je veux **envoyer un `.neo` depuis le PC en Wi-Fi** et l'exécuter (remplace le câble série `nxmit`), ou l'écrire dans l'image disque. | À faire |
+| US-T6 | P2 | En tant qu'utilisateur, je veux un **client HTTP simple et NTP** (télécharger un fichier vers la SD/l'image, mettre à l'heure), exposés en AT (`AT+HTTPGET`) et en binaire. | À faire |
+| US-T7 | P3 | En tant qu'utilisateur du Télémon, je veux un **serveur telnet entrant** pour piloter le moniteur depuis le PC, et `load`/`save` réseau. | À faire |
+| US-T8 | P3 | En tant qu'utilisateur, je veux un partage de fichiers réseau vers la SD/les images (Samba sur le Pi Zero W), afin de déposer des programmes sans manipuler la carte. | À faire |
+
+Ordre : US-T1 → US-T2 → US-T3/T4 → T5/T6 → T7/T8. Prototype sur Pi Zero W en
+UART UEXT dès la fin du sprint 1 (même carte que US-M0), portage Feather/ESP32
+ensuite, puis transport CDC (EPIC-04).
 
 ## EPIC-03 — Périphérique sur le bus 6502 (connecteur BUS1)
 
