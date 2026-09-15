@@ -21,11 +21,20 @@ portable + couche Pico W (cyw43, lwIP, TinyUSB CDC, UART0, flash) ;
 netinfo/netsetup/prophet ; UF2 compilé sans avertissement (Pico SDK 2.2.0) ;
 `hardware/PICOW_UEXT.md` ; `Makefile` racine (`test`, `firmware`, `flash`).
 
-**Reste à faire dans le sprint** : flasher la carte (BOOTSEL), consigner ici
-le test PC (`/dev/ttyACM0` : AT, CWLAP, CWJAP, CIPSTART/CIPSEND vers
-mimuma.pl:8998, ATDT, +++), puis le test UEXT avec `netsetup.neo` /
-`prophet.neo` sur le Neo6502. Contrainte : le port USB du Neo6502 n'est
-exploitable qu'après F-13 (Neo6502firmware).
+**Test sur carte (2026-09-15, PC, `/dev/ttyACM0`)** : le Pico W est
+énuméré `2e8a:000a Neo6502drive Pico W Wi-Fi modem` ; `AT`, `ATE0`, `AT+GMR`,
+`AT+CWMODE?`, `AT+CIPSTATUS` (`STATUS:5` sans AP), `AT+CIFSR` (MAC) et
+`AT+CWLAP=,,,1,,` (10 réseaux, ecn/ssid/rssi) conformes. Anomalies vues et
+corrigées sur place : doublons de SSID (un par point d'accès) ; octet
+parasite avant le premier `AT` après le boot (RX UART flottant). Le premier
+flash a nécessité un câble micro-USB de données (le premier câble essayé
+n'était pas vu du PC) ; les suivants passent par `AT+BOOTSEL`.
+
+**Reste à faire dans le sprint** : consigner CWJAP, DNS, CIPSTART/CIPSEND
+vers mimuma.pl:8998, ATDT/+++/ATH (identifiants Wi-Fi à saisir par le PO),
+puis le test UEXT avec `netsetup.neo` / `prophet.neo` sur le Neo6502.
+Contrainte : le port USB du Neo6502 n'est exploitable qu'après F-13
+(Neo6502firmware).
 
 ## Sprint 2 — à planifier — « Prototype clé USB virtuelle sur Pi Zero W »
 

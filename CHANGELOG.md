@@ -15,6 +15,12 @@ versionnement SemVer.
   USB CDC-ACM et UART0 GP0/GP1 simultanés, configuration en flash ; cœur
   portable testé sur PC (`make test`, 126 vérifications) ; `Makefile` racine
   (`test`, `firmware`, `flash`) ; `hardware/PICOW_UEXT.md`.
+- `AT+BOOTSEL` (reflash sans bouton) ; balayage Wi-Fi dédoublonné par SSID et
+  trié par RSSI ; premier test sur carte (voir SPRINTS).
+
+### Corrigé
+- Octet parasite avant la première commande après le boot (UART RX GP1 en
+  l'air) : pull-up interne, vidage du FIFO et rejet des octets en erreur.
 
 ### Modifié
 - EPIC-02 : matériel Pico W (décision PO) à la place du Pi Zero W ; sprint 1
