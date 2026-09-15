@@ -1,5 +1,6 @@
 # Neo6502drive — cibles communes.
-#   make test      tests automatisés (cœur du modem Pico W sur PC)
+#   make test      tests automatisés (cœur du modem Pico W sur PC, terminal 6502 dans Phosphoneo)
+#   make term      terminal série 6502 → driver/build/term.neo6502 (charger @800 cold)
 #   make firmware  firmware Pico W (PICO_SDK_PATH requis) → firmware/picow-modem/build/picow_modem.uf2
 #   make flash     copie l'UF2 sur un Pico W en mode BOOTSEL monté sous /media ou /run/media
 
@@ -8,6 +9,10 @@ export PICO_SDK_PATH
 
 test:
 	$(MAKE) -C firmware/picow-modem/tests test
+	$(MAKE) -C driver test
+
+term:
+	$(MAKE) -C driver
 
 firmware:
 	cmake -S firmware/picow-modem -B firmware/picow-modem/build -DCMAKE_BUILD_TYPE=Release
