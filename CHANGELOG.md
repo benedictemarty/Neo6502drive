@@ -36,6 +36,8 @@ versionnement SemVer.
   l'air) : pull-up interne, vidage du FIFO et rejet des octets en erreur.
 
 ### Modifié
+- Licence changée de MIT en EUPL v1.2 (décision du 2026-09-15, commune aux
+  projets Neo6502 de bmarty ; le fork Neo6502firmware reste MIT).
 - EPIC-02 : matériel Pico W (décision PO) à la place du Pi Zero W ; sprint 1
   réaffecté au modem Wi-Fi, prototype clé USB décalé en sprint 2, sprints
   renumérotés ; architecture et README mis à jour.
