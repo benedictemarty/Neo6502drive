@@ -46,6 +46,26 @@ répond à toutes les adresses en lecture (`processor_pio.cpp`), donc :
 | US-B3 | P3 | En tant que développeur, je veux une **fenêtre d'adresses** dans le firmware Neo6502 où le RP2040 ne pilote pas D0-D7 (et `RDY` pour les périphériques lents), reportée dans l'émulateur, afin de brancher des périphériques lisibles (ROM, 6522, RAM). | À faire (firmware) |
 | US-B4 | P3 | En tant que développeur, je veux un canal bloc complet sur BUS1 (écriture de commande + lecture via la fenêtre US-B3), plus rapide que l'UART/SPI. | À faire |
 
+## EPIC-04 — Prise en charge CDC (série sur USB) dans le firmware Neo6502
+
+Objectif : que le Neo6502 accepte un périphérique USB **CDC-ACM** (Feather ou
+Pi Zero W en gadget série, éventuellement composite MSC + CDC) pour porter le
+protocole bloc et le proxy TCP **sur le port USB-A**, sans câblage UEXT ni
+interrupteur. Nécessite un fork du firmware (`tusb_config.h : CFG_TUH_CDC 0`
+aujourd'hui) — à proposer en amont au projet officiel.
+
+| ID | P | User story | État |
+|----|---|------------|------|
+| US-C1 | P2 | En tant que développeur, je veux compiler le firmware Neo6502 officiel tel quel (chaîne arm-none-eabi, Pico SDK, 64tass), afin d'avoir une base reproductible avant modification. | À faire |
+| US-C2 | P2 | En tant que développeur, je veux activer l'hôte CDC dans TinyUSB (`CFG_TUH_CDC 1`, callbacks `tuh_cdc_*`, tampon de réception) et vérifier la coexistence avec HID, MSC et hub, afin qu'un périphérique série USB soit reconnu. | À faire |
+| US-C3 | P2 | En tant que développeur 6502, je veux accéder au flux CDC par l'API : soit en routant les fonctions UART existantes (10,13..10,18) vers le CDC quand il est présent, soit par de nouvelles fonctions (groupe 10, ≥ 19), afin de réutiliser le driver ca65 du mode bloc sans changement. | À faire |
+| US-C4 | P2 | En tant que développeur, je veux une maquette CDC dans l'émulateur `neo` (pty ou TCP), afin de tester le protocole sans matériel. | À faire |
+| US-C5 | P3 | En tant qu'utilisateur, je veux un gadget composite MSC + CDC sur le Pi Zero W (configfs) puis sur le Feather (TinyUSB device), afin d'avoir clé virtuelle et canal série sur le même câble. | À faire |
+| US-C6 | P3 | En tant que contributeur, je veux proposer la prise en charge CDC en amont (pull request neo6502-firmware) avec documentation API, afin de ne pas maintenir un fork. | À faire |
+
+Dépendances : US-C1 → US-C2 → US-C3/US-C4 → US-C5 ; le mode bloc UEXT
+(US-01..US-05) reste la voie sans modification du firmware.
+
 ## Hors périmètre (nécessite de modifier le firmware Neo6502)
 
 - **Bank switching ROM/RAM** : la mémoire du 65C02 est émulée par le RP2040

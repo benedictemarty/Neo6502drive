@@ -43,6 +43,13 @@ Documentation » (PDF officiel, 80 p.).
   (`processor_pio.cpp`) : périphériques externes en écriture seule OK sans
   firmware modifié ; lecture ⇒ fenêtre d'adresses à ajouter au firmware.
 
+## USB hôte du firmware — `firmware/include/tusb_config.h`
+
+`CFG_TUH_HUB 1`, `CFG_TUH_HID 4`, `CFG_TUH_MSC 1`, **`CFG_TUH_CDC 0`**,
+`CFG_TUH_VENDOR 0`, `CFG_TUH_DEVICE_MAX 5`. Aucun code `tuh_cdc_*` dans
+`usbdriver.cpp` (HID seulement) ni `usb_storage.cpp` (MSC). Activer le CDC =
+EPIC-04.
+
 ## Stockage interne existant — `group3_fileio.inc`, PDF §3.7
 
 FAT32 (première partition, noms 8.3) sur clé USB ou microSD, accès fichiers

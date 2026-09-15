@@ -17,6 +17,20 @@ logicielle (`tud_disconnect`), sélection, reconnexion. Contraintes vérifiées 
 seules les classes HID, MSC et hub sont acceptées côté Neo6502 ; une seule
 unité MSC (`CFG_TUH_MSC 1`), donc **une image visible à la fois**.
 
+## Mode CDC USB (v3, EPIC-04 — firmware Neo6502 modifié)
+
+```
+ Neo6502 USB-A ─ hub ─ Feather / Pi Zero W en gadget composite : MSC (clé virtuelle) + CDC-ACM (série)
+                       │
+   6502 : mêmes trames que le mode bloc, via l'API UART (10,13..10,18) routée vers le CDC
+```
+
+Le firmware Neo6502 doit gagner un hôte CDC (TinyUSB `CFG_TUH_CDC`). Le
+protocole et le driver ca65 sont **inchangés** : seul le transport diffère.
+Avantages : un seul câble, pas d'interrupteur de configuration, débit USB
+full-speed (12 Mbit/s) bien supérieur à l'UART. Inconvénient : fork du
+firmware tant que l'amont ne l'intègre pas.
+
 ## Mode bloc UEXT (v2)
 
 ```

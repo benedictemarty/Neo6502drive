@@ -29,3 +29,9 @@ Candidats : US-01, US-02, US-03, US-04, US-10 (tout testable sans matériel).
 ## Sprint 4 — « Firmware bloc, mesures, télécom »
 
 Candidats : US-05, US-11 ; puis EPIC-02 (proxy TCP).
+
+## Sprint 5 — « CDC dans le firmware » (EPIC-04)
+
+Candidats : US-C1 (build du firmware officiel), US-C2, US-C3, US-C4 ; US-C5
+sur le Pi Zero W (configfs) peut être préparé dès le sprint 1 en composite
+MSC + CDC, le CDC restant inactif côté Neo6502 jusqu'à US-C2.
