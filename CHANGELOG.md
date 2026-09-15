@@ -4,6 +4,7 @@ Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) ;
 versionnement SemVer.
 
 ## [Unreleased]
+- 2026-09-15 : premier dialogue de bout en bout : firmware Neo (fork F-90, groupe 14, co-sim Phosphoneo) ↔ Pico W modem réel (`2e8a:000a`, `/dev/ttyACM0`) — `ATI` → « Neo6502drive Pico W modem 0.1.0 », `ATZ` → `OK`. Le modem fait l'écho des commandes.
 - 2026-09-15 : US-C2..C4 réalisées dans le fork firmware (F-90, groupe 14 « USB Serial (CDC) ») ; le modem Hayes de US-T1 peut être testé de bout en bout contre `Phosphoneo/tools/fake_modem.py` ou un vrai modem CDC.
 
 ### Ajouté
