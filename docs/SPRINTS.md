@@ -9,16 +9,23 @@ notes vérifiées sur l'API UEXT du Neo6502.
 (possédée par le PO) ; **mode MSC USB d'abord** (clé virtuelle, aucun driver
 6502), puis mode bloc UEXT (UART v1, SPI v2), puis télécom (EPIC-02).
 
-## Sprint 1 — à planifier — « Clé USB virtuelle »
+## Sprint 1 — à planifier — « Prototype clé USB virtuelle sur Pi Zero W »
 
-Stories : US-M1, US-M2, US-M3, US-M4. Objectif : brancher le Feather au
-Neo6502 et charger un programme depuis une image choisie sur le Feather.
-Prérequis : Pico SDK + TinyUSB + Pico-PIO-USB installés (à faire), hub USB.
+Stories : **US-M0**, US-M4 (outil d'images). Objectif : le Neo6502 charge un
+programme depuis une image choisie via la page web du Pi ; consigner :
+alimentation par le hub, délai d'apparition, comportement au changement
+d'image à chaud. Prérequis : hub USB, câble micro-USB OTG, carte SD Raspberry
+Pi OS Lite. Aucun firmware à écrire.
 
-## Sprint 2 — « Périphérique bloc UEXT »
+## Sprint 2 — « Clé USB virtuelle embarquée (Feather) »
+
+Stories : US-M1, US-M2, US-M3 (reprend images et outil validés en S1).
+Prérequis : Pico SDK + TinyUSB + Pico-PIO-USB.
+
+## Sprint 3 — « Périphérique bloc UEXT »
 
 Candidats : US-01, US-02, US-03, US-04, US-10 (tout testable sans matériel).
 
-## Sprint 3 — « Firmware bloc et mesures »
+## Sprint 4 — « Firmware bloc, mesures, télécom »
 
-Candidats : US-05, US-11 ; puis EPIC-02.
+Candidats : US-05, US-11 ; puis EPIC-02 (proxy TCP).

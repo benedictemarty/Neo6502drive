@@ -4,9 +4,10 @@ Priorité P1 > P2 > P3. État : À faire / En cours / Terminé (sprint).
 
 | ID | P | User story | État |
 |----|---|------------|------|
-| US-M1 | P1 | En tant qu'utilisateur, je veux que le Feather apparaisse comme une clé USB FAT32 sur le Neo6502 (TinyUSB device MSC) servant une image `.img` fixe, afin de valider la chaîne sans driver 6502. | À faire (S1) |
-| US-M2 | P1 | En tant qu'utilisateur, je veux que les images viennent de la clé USB branchée au port hôte du Feather (PIO-USB + FatFS) ou d'une microSD, afin de gérer plusieurs volumes. | À faire (S1) |
-| US-M3 | P1 | En tant qu'utilisateur, je veux changer d'image (bouton / liste) et que le Neo6502 voie le nouveau volume (déconnexion/reconnexion USB), afin de « changer de disquette ». | À faire (S1) |
+| US-M0 | P1 | En tant que PO, je veux un prototype « clé USB virtuelle » sur **Raspberry Pi Zero W** (gadget USB `mass_storage` via configfs, script Python, page web de sélection d'image en Wi-Fi), afin de valider le concept, le changement d'image à chaud et l'alimentation avant d'écrire le firmware Feather. | À faire (S1) |
+| US-M1 | P1 | En tant qu'utilisateur, je veux que le Feather apparaisse comme une clé USB FAT32 sur le Neo6502 (TinyUSB device MSC) servant une image `.img` fixe, afin de valider la chaîne sans driver 6502. | À faire (S2) |
+| US-M2 | P1 | En tant qu'utilisateur, je veux que les images viennent de la clé USB branchée au port hôte du Feather (PIO-USB + FatFS) ou d'une microSD, afin de gérer plusieurs volumes. | À faire (S2) |
+| US-M3 | P1 | En tant qu'utilisateur, je veux changer d'image (bouton / liste) et que le Neo6502 voie le nouveau volume (déconnexion/reconnexion USB), afin de « changer de disquette ». | À faire (S2) |
 | US-M4 | P2 | En tant qu'utilisateur, je veux créer des images de volumes FAT32 depuis le PC (outil Go) et y copier des fichiers, afin de préparer mes disquettes. | À faire (S1) |
 | US-M5 | P2 | En tant que développeur, je veux un test automatisé du mode MSC (image montée sur PC via le Feather, ou simulateur), afin d'éviter les régressions. | À faire |
 | US-01 | P1 | En tant que développeur, je veux un protocole bloc documenté (commandes, trames, erreurs), afin que firmware, driver et outils partagent une même spécification. | À faire (S1) |
@@ -22,11 +23,24 @@ Priorité P1 > P2 > P3. État : À faire / En cours / Terminé (sprint).
 | US-11 | P2 | En tant que développeur, je veux mesurer le débit réel (UART vs SPI) sur matériel et le consigner. | À faire |
 | US-12 | P3 | En tant qu'utilisateur du Télémon, je veux des commandes de chargement/sauvegarde par secteurs (intégration EPIC-01 de Neo6502kbd). | À faire |
 
-## EPIC-02 — Télécom via le Feather (après le mode bloc UEXT)
+## EPIC-02 — Télécom (après le mode bloc UEXT)
 
-Services réseau exposés au 6502 par le même protocole (commandes `$10-$1F`) :
-sockets TCP, NTP, téléchargement dans une image, pont série↔TCP. Matériel :
-AirLift FeatherWing (ESP32) sur le Feather RP2040 USB Host, ou Feather ESP32-S3.
+Services réseau exposés au 6502 par le même protocole (commandes `$10-$1F`),
+la **pile TCP restant sur le périphérique** (proxy de sockets) : ouvrir/lire/
+écrire/fermer, DNS, NTP, téléchargement dans une image, pont série↔TCP.
+Matériel : Pi Zero W (Wi-Fi intégré, UART UEXT) pour prototyper ; AirLift
+FeatherWing ou Feather ESP32-S3 pour la version embarquée. Une vraie pile
+TCP/IP sur le 6502 (Contiki/uIP via cc65, SLIP sur l'UART) est possible mais
+lourde et lente : non retenue en première approche.
+
+## Hors périmètre (nécessite de modifier le firmware Neo6502)
+
+- **Bank switching ROM/RAM** : la mémoire du 65C02 est émulée par le RP2040
+  (64 Ko plats, aucun registre de banque). Ajouter des banques (pages de flash
+  en « ROM », RAM supplémentaire limitée par les ~47 Ko libres du RP2040)
+  demande de modifier la boucle PIO/mémoire du firmware, pas un périphérique
+  externe. Alternative logicielle : overlays chargés à la demande depuis le
+  disque virtuel (à étudier avec le Télémon).
 
 ## Questions ouvertes
 
