@@ -4,6 +4,7 @@ Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) ;
 versionnement SemVer.
 
 ## [Unreleased]
+- 2026-09-15 : US-T9 vérifiée avec le vrai Pico W modem (`MODEM_TTY=/dev/ttyACM0 make -C driver test`) : `ATI` → « Neo6502drive Pico W modem 0.1.0 / last reset: watchdog, stage 0 / OK ».
 - 2026-09-15 : US-T9 — terminal série 6502 `driver/src/term.asm` (API groupe 14 : 14,1 statut, 14,2 lecture, 14,3 écriture ; CR ignoré, LF = ligne, Échap = quitter, détection de déconnexion) ; `make -C driver` et `make -C driver test` (Phosphoneo + faux modem ; `MODEM_TTY` pour un vrai modem).
 - 2026-09-15 : premier dialogue de bout en bout : firmware Neo (fork F-90, groupe 14, co-sim Phosphoneo) ↔ Pico W modem réel (`2e8a:000a`, `/dev/ttyACM0`) — `ATI` → « Neo6502drive Pico W modem 0.1.0 », `ATZ` → `OK`. Le modem fait l'écho des commandes.
 - 2026-09-15 : US-C2..C4 réalisées dans le fork firmware (F-90, groupe 14 « USB Serial (CDC) ») ; le modem Hayes de US-T1 peut être testé de bout en bout contre `Phosphoneo/tools/fake_modem.py` ou un vrai modem CDC.
