@@ -28,6 +28,10 @@ versionnement SemVer.
   entrant) consignée dans SPRINTS.
 
 ### Corrigé
+- Connexion Wi-Fi au démarrage abandonnée sur `LINK_NONET` (réseau pas encore
+  vu) : relance jusqu'au délai, comme le SDK.
+- Compilation en `-O2` : `-O3` (GCC 14.2.1, Cortex-M0+) rend AES-GCM de
+  mbedTLS faux (`bad_record_mac`).
 - Blocage de `AT+CIPSTART` après activation de SNTP (assertion lwIP
   « pool MEMP_SYS_TIMEOUT is empty ») : `MEMP_NUM_SYS_TIMEOUT` augmenté.
 - SNTP non relancé après `AT+CIPSNTPCFG` ; `AT+CWJAP?` renvoyait la MAC de la

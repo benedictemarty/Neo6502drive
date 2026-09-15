@@ -44,6 +44,7 @@ par ces programmes sans modification.
 | US-T0 | P1 | En tant que PO, je veux un **firmware Pico W** (Pico SDK, cyw43/lwIP, TinyUSB) exposant le modem sur **USB CDC et UART0 GP0/GP1** à la fois, afin de brancher la carte en UEXT dès maintenant et en USB après F-13. | Terminé (S1) — validation sur carte à consigner |
 | US-T1 | P1 | En tant qu'utilisateur, je veux un **modem Hayes virtuel** sur le canal série : `AT`, `ATDT hôte:port` (TCP sortant, mode transparent, `+++` pour revenir en commande), `ATH`, `ATA` (écoute entrante), registres S de base, afin d'utiliser tout programme terminal / BBS / MUD écrit pour un modem. | Terminé (S1) — tests PC ; carte à consigner |
 | US-T2 | P1 | En tant qu'utilisateur, je veux que le périphérique accepte le **sous-ensemble AT ESP8266** utilisé par `netsetup`/`netinfo`/`netconsole`/`prophet` (liste exacte relevée dans les sources : voir `firmware/picow-modem/README.md`), afin de rester compatible avec les outils existants de la communauté sans modification. | Terminé (S1) — tests PC ; carte à consigner |
+| US-T9 | P1 | En tant qu'utilisateur de `prophet.neo` (non modifié), je veux que le modem **termine le TLS** (« picowifitls », mémo Neo6502Prophet du 2026-09-16, décisions D5/D6) : `AT+CIPSTART="SSL"`, `AT+TLSPORT=443` pour les clients qui ne savent dire que `"TCP"`, certificat vérifié contre une racine embarquée (ISRG Root X1) + nom d'hôte + dates (heure SNTP exigée), reprise de session, mesures de handshake ; afin de dialoguer en HTTPS avec un serveur Prophet sur Internet. | Terminé (S1) — validé sur carte ; test de bout en bout avec le serveur Prophet HTTPS à faire |
 | US-T3 | P1 | En tant que développeur 6502, je veux un **proxy de sockets** binaire (commandes `$10-$1F` : open/read/write/close, DNS, statut, 4 connexions, non bloquant) et le driver ca65 `net.s`, afin d'écrire des programmes réseau sans parser de texte AT. | À faire (S4) |
 | US-T9 | P1 | En tant qu'utilisateur, je veux un **terminal série** sur le Neo (clavier → modem CDC, modem → console, Échap = sortie) pour taper `ATI`, `ATDT hôte:port`, `+++`, `ATH` et dialoguer avec un BBS. | Terminé 2026-09-15 : `driver/src/term.asm` (64tass, groupe 14 du fork), `make -C driver test` (faux modem Hayes de Phosphoneo ; `MODEM_TTY=/dev/ttyACM0` pour le vrai) |
 | US-T4 | P2 | En tant que développeur, je veux une **maquette réseau dans le simulateur Go** (le périphérique simulé ouvre de vraies sockets sur le PC) et des tests du driver assemblé, afin de valider sans matériel. | À faire (S4) |
@@ -54,8 +55,8 @@ par ces programmes sans modification.
 
 Ordre : US-T0/T1/T2 (sprint 1, Pico W) → US-T3/T4 → T5/T6 → T7/T8. Transport
 UART UEXT immédiat, transport CDC USB dès que F-13 (Neo6502firmware) est
-livrée. Limites connues du firmware Pico W : pas de TLS (`AT+CIPSSLCCONF=1`
-→ `ERROR`), pas d'UDP, une connexion (`CIPMUX=0`), pas d'OTA.
+livrée. Limites connues du firmware Pico W : TLS 1.2 seulement (pas de 1.3, pas de
+certificat client), pas d'UDP, une connexion (`CIPMUX=0`), pas d'OTA.
 
 ## EPIC-03 — Périphérique sur le bus 6502 (connecteur BUS1)
 

@@ -57,6 +57,26 @@ distant ; (3) données d'un appel entrant émises en `+IPD` avant `RING` ;
 (4) envoi TCP octet par octet en ligne ; (5) `CWJAP?` renvoyait la MAC de
 la carte au lieu du BSSID ; (6) SNTP non relancé après `AT+CIPSNTPCFG`.
 
+**US-T9 « picowifitls » (2026-09-16, à la demande du projet Neo6502Prophet)** :
+TLS terminé sur le Pico W livré et validé sur carte — `AT+CIPSTART="SSL"`,
+`AT+TLSPORT`, vérification CA (ISRG Root X1) + SNI + dates, refus sans heure
+SNTP, reprise de session, `AT+TLSTEST`, diagnostic dans `ATI`. Mesures :
+handshake complet 2,4–2,8 s (mimuma.pl, ECDHE-RSA-AES256-GCM, chaîne de 4),
+repris 0,3–0,5 s ; scénario Prophet (une connexion par bloc) 3–4 s puis
+1,2 s par bloc ; letsencrypt.org (ECDSA, CDN) 5 s. Refus vérifiés : nom
+d'hôte faux (IP directe, drapeau 0x4), racine inconnue (www.google.com,
+0x8). Anomalies trouvées et corrigées : `-O3` casse AES-GCM (GCC 14.2.1,
+autotest mbedTLS en échec, `bad_record_mac` partout) → `-O2` ; handshake
+> 8 s dans l'IRQ lwIP → timer de garde du watchdog ; fenêtre ECC 6→4 après
+mesure (16 s → 3 s de vérification) ; **`altcp_tls` en `VERIFY_OPTIONAL` par
+défaut acceptait un certificat au mauvais nom** → `REQUIRED` forcé ; join
+Wi-Fi au boot abandonné sur `LINK_NONET` → relance comme le SDK ; migration
+de la configuration flash v1 → v2 sans ressaisie. Tests PC : 164 + 10 804
+(dates). Reste : test de bout en bout avec le serveur Prophet en HTTPS
+(Sprint 2 de Neo6502Prophet), mesure `pget` réelle ; observation : une
+connexion fermée côté client aussitôt après le handshake n'a pas été reprise
+(à creuser, sans impact sur Prophet).
+
 **Non testé** : transport UART (GP0/GP1) — nécessite le câblage UEXT ou un
 adaptateur USB-série ; `netsetup.neo` / `prophet.neo` sur le Neo6502 réel.
 Contrainte : le port USB du Neo6502 n'est exploitable qu'après F-13
