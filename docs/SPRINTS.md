@@ -30,9 +30,35 @@ parasite avant le premier `AT` après le boot (RX UART flottant). Le premier
 flash a nécessité un câble micro-USB de données (le premier câble essayé
 n'était pas vu du PC) ; les suivants passent par `AT+BOOTSEL`.
 
-**Reste à faire dans le sprint** : consigner CWJAP, DNS, CIPSTART/CIPSEND
-vers mimuma.pl:8998, ATDT/+++/ATH (identifiants Wi-Fi à saisir par le PO),
-puis le test UEXT avec `netsetup.neo` / `prophet.neo` sur le Neo6502.
+**Test réseau sur carte (2026-09-15, suite, Wi-Fi = partage de connexion
+Android 2,4 GHz)** :
+- `AT+CWJAP_DEF` (saisi par le PO dans `screen`) → `WIFI CONNECTED / WIFI
+  GOT IP` ; un premier essai avait donné `+CWJAP:1` (timeout, SSID/mdp à
+  revoir côté PO) ; reconnexion automatique au boot vérifiée (`STATUS:2`).
+- `AT+CIPSTA_CUR?`, `AT+CIPDNS_CUR?`, `AT+CWDHCP_DEF?`, `AT+CWJAP_CUR?`
+  (BSSID, canal, RSSI), `AT+PING="mimuma.pl"` (158 ms), SNTP
+  (`+CIPSNTPTIME:Tue Sep 15 22:59:00 2026`) : conformes.
+- Séquence Prophet vers `mimuma.pl:80` (le port 8998 est injoignable
+  depuis ce réseau, PC compris) : `CONNECT` → `AT+CIPSEND=57` → `> ` →
+  `Recv 57 bytes` / `SEND OK` → `+IPD,483:` (réponse HTTP) → `CLOSED` ;
+  `STATUS:4` ensuite ; deux connexions successives OK.
+- Hayes : `ATDT telehack.com:23` → `CONNECT`, dialogue transparent
+  (`date`), `+++` → `OK` sans transmission des `+`, `ATO`, `ATH` ;
+  `AT+CIPSERVER=1,6502` puis connexion depuis le PC → `RING`, `ATA` →
+  `CONNECT` + données envoyées avant le décroché, réponse reçue entière par
+  le PC, `NO CARRIER` à la fermeture.
+
+**Anomalies trouvées sur carte et corrigées** : (1) blocage de
+`tcp_connect` après `sntp_init` — assertion lwIP « pool MEMP_SYS_TIMEOUT is
+empty » (temporisateurs non comptés pour SNTP) → `MEMP_NUM_SYS_TIMEOUT`
+augmenté ; diagnostiqué grâce au watchdog + points d'étape + capture du
+message d'assertion, désormais lisibles par `ATI` ; (2) `+++` transmis au
+distant ; (3) données d'un appel entrant émises en `+IPD` avant `RING` ;
+(4) envoi TCP octet par octet en ligne ; (5) `CWJAP?` renvoyait la MAC de
+la carte au lieu du BSSID ; (6) SNTP non relancé après `AT+CIPSNTPCFG`.
+
+**Non testé** : transport UART (GP0/GP1) — nécessite le câblage UEXT ou un
+adaptateur USB-série ; `netsetup.neo` / `prophet.neo` sur le Neo6502 réel.
 Contrainte : le port USB du Neo6502 n'est exploitable qu'après F-13
 (Neo6502firmware).
 

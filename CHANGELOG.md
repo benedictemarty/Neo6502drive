@@ -19,8 +19,18 @@ versionnement SemVer.
   (`test`, `firmware`, `flash`) ; `hardware/PICOW_UEXT.md`.
 - `AT+BOOTSEL` (reflash sans bouton) ; balayage Wi-Fi dédoublonné par SSID et
   trié par RSSI ; premier test sur carte (voir SPRINTS).
+- Watchdog 8 s, points d'étape et capture des assertions lwIP, cause du
+  dernier reset dans `ATI` ; connexion Wi-Fi asynchrone (compatible
+  watchdog) ; `+++` retenus pendant le temps de garde (non transmis) ; envoi
+  TCP groupé en ligne ; données d'un appel entrant retenues jusqu'à `ATA`.
+  Validation réseau complète sur carte (Prophet sur HTTP, telnet, appel
+  entrant) consignée dans SPRINTS.
 
 ### Corrigé
+- Blocage de `AT+CIPSTART` après activation de SNTP (assertion lwIP
+  « pool MEMP_SYS_TIMEOUT is empty ») : `MEMP_NUM_SYS_TIMEOUT` augmenté.
+- SNTP non relancé après `AT+CIPSNTPCFG` ; `AT+CWJAP?` renvoyait la MAC de la
+  carte au lieu du BSSID.
 - Octet parasite avant la première commande après le boot (UART RX GP1 en
   l'air) : pull-up interne, vidage du FIFO et rejet des octets en erreur.
 
