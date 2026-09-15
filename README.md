@@ -58,4 +58,4 @@ hardware/              câblage UEXT <-> Pico W / Feather, nomenclature
 
 ## Licence
 
-MIT.
+[EUPL v1.2](LICENSE) (European Union Public Licence) — © 2026 bmarty.
