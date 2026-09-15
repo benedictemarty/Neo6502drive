@@ -33,6 +33,19 @@ FeatherWing ou Feather ESP32-S3 pour la version embarquée. Une vraie pile
 TCP/IP sur le 6502 (Contiki/uIP via cc65, SLIP sur l'UART) est possible mais
 lourde et lente : non retenue en première approche.
 
+## EPIC-03 — Périphérique sur le bus 6502 (connecteur BUS1)
+
+Le connecteur BUS1 expose tout le bus du 65C02 (D0-D7, A0-A15, PHI2, R/W,
+RESB, SOB, MLB, VPB, SYNC, NMIB, IRQB ; RDY et BE sur le schéma). Le RP2040
+répond à toutes les adresses en lecture (`processor_pio.cpp`), donc :
+
+| ID | P | User story | État |
+|----|---|------------|------|
+| US-B1 | P2 | En tant que développeur, je veux relever le brochage exact et les niveaux (3,3 V / 5 V) de BUS1 sur le schéma rev. B1, afin de câbler sans risque. | À faire |
+| US-B2 | P2 | En tant que développeur, je veux un périphérique **en écoute d'écritures** (décodage d'une adresse `$FExx`, capture de D0-D7 sur R/W bas par le PIO du Feather), sans modification du firmware, afin d'envoyer des commandes au Feather par simple `STA`. | À faire |
+| US-B3 | P3 | En tant que développeur, je veux une **fenêtre d'adresses** dans le firmware Neo6502 où le RP2040 ne pilote pas D0-D7 (et `RDY` pour les périphériques lents), reportée dans l'émulateur, afin de brancher des périphériques lisibles (ROM, 6522, RAM). | À faire (firmware) |
+| US-B4 | P3 | En tant que développeur, je veux un canal bloc complet sur BUS1 (écriture de commande + lecture via la fenêtre US-B3), plus rapide que l'UART/SPI. | À faire |
+
 ## Hors périmètre (nécessite de modifier le firmware Neo6502)
 
 - **Bank switching ROM/RAM** : la mémoire du 65C02 est émulée par le RP2040
@@ -50,6 +63,11 @@ lourde et lente : non retenue en première approche.
   déconnexion/reconnexion MSC sans redémarrage ? À tester (usb_storage.cpp).
 - Le Neo6502 n'a qu'un port USB-A : un hub (Olimex recommandé) est requis
   pour clavier + Feather.
+- **Interrupteur de configuration (manuel Olimex)** : par défaut RESB, NMIB
+  et IRQB sont reliés aux GPIO UEXT du RP2040 et le buzzer est activé ;
+  « you can't use SPI on UEXT connector if you do not disconnect these
+  signals ». **Le mode bloc SPI (US-07) impose de basculer cet interrupteur** ;
+  vérifier aussi l'effet sur l'UART avant US-03.
 
 - Vitesse UART maximale supportée de bout en bout (firmware Neo6502 :
   `IOUARTInitialise`, tampon de réception) : à mesurer (US-11).
