@@ -5,6 +5,10 @@ versionnement SemVer.
 
 ## [Unreleased]
 
+### Modifié
+- Stories firmware (US-C1..C4, US-B3) déléguées au dépôt commun Neo6502firmware
+  (F-00, F-13, F-20).
+
 ### Ajouté
 - Sprint 0 (2026-09-15) : création du projet, cadrage (vision, backlog, DoD,
   architecture et protocole proposés, notes vérifiées sur l'API UEXT).
