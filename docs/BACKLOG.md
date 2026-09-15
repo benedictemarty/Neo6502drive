@@ -80,9 +80,9 @@ aujourd'hui) — à proposer en amont au projet officiel.
 | ID | P | User story | État |
 |----|---|------------|------|
 | US-C1 | P2 | Compiler le firmware officiel tel quel. | **Délégué → Neo6502firmware F-00** |
-| US-C2 | P2 | Hôte CDC dans TinyUSB. | **Délégué → Neo6502firmware F-13** |
-| US-C3 | P2 | Exposition du CDC par l'API (routage UART ou nouvelles fonctions). | **Délégué → Neo6502firmware F-13** |
-| US-C4 | P2 | Maquette CDC dans l'émulateur `neo`. | **Délégué → Neo6502firmware F-13** |
+| US-C2 | P2 | Hôte CDC dans TinyUSB. | **Fait dans Neo6502firmware F-90** (2026-09-15) : `CFG_TUH_CDC 2` + FTDI/CP210x |
+| US-C3 | P2 | Exposition du CDC par l'API (routage UART ou nouvelles fonctions). | **Fait dans Neo6502firmware F-90** : groupe 14 (statut, octet/bloc, line coding) |
+| US-C4 | P2 | Maquette CDC dans l'émulateur `neo`. | **Fait** : `NEO_CDC_TTY=/dev/pts/N bin/neo` (pty, tty réel ou fichier) ; co-sim Phosphoneo `--cdc-tty` ; faux modem Hayes `Phosphoneo/tools/fake_modem.py` |
 | US-C5 | P3 | En tant qu'utilisateur, je veux un gadget composite MSC + CDC sur le Pi Zero W (configfs) puis sur le Feather (TinyUSB device), afin d'avoir clé virtuelle et canal série sur le même câble. | À faire |
 | US-C6 | P3 | En tant que contributeur, je veux proposer la prise en charge CDC en amont (pull request neo6502-firmware) avec documentation API, afin de ne pas maintenir un fork. | À faire |
 

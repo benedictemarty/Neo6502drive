@@ -4,6 +4,7 @@ Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) ;
 versionnement SemVer.
 
 ## [Unreleased]
+- 2026-09-15 : US-C2..C4 réalisées dans le fork firmware (F-90, groupe 14 « USB Serial (CDC) ») ; le modem Hayes de US-T1 peut être testé de bout en bout contre `Phosphoneo/tools/fake_modem.py` ou un vrai modem CDC.
 
 ### Ajouté
 - Sprint 1 (2026-09-15) : firmware `firmware/picow-modem/` — modem Wi-Fi sur
