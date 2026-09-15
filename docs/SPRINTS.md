@@ -77,6 +77,11 @@ de la configuration flash v1 → v2 sans ressaisie. Tests PC : 164 + 10 804
 connexion fermée côté client aussitôt après le handshake n'a pas été reprise
 (à creuser, sans impact sur Prophet).
 
+**Validation rejouable (2026-09-16)** : `firmware/picow-modem/validation/`
+(protocole + `validate.py` + rapport) — 55/55 après ajout de la reconnexion
+Wi-Fi de fond (défaut trouvé par le protocole : après `AT+RST` la carte
+pouvait rester hors Wi-Fi sans retenter).
+
 **Non testé** : transport UART (GP0/GP1) — nécessite le câblage UEXT ou un
 adaptateur USB-série ; `netsetup.neo` / `prophet.neo` sur le Neo6502 réel.
 Contrainte : le port USB du Neo6502 n'est exploitable qu'après F-13
