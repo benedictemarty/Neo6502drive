@@ -53,8 +53,14 @@ par ces programmes sans modification.
 | US-T6 | P2 | En tant qu'utilisateur, je veux un **client HTTP simple et NTP** (télécharger un fichier vers la SD/l'image, mettre à l'heure), exposés en AT (`AT+HTTPGET`) et en binaire. | À faire |
 | US-T7 | P3 | En tant qu'utilisateur du Télémon, je veux un **serveur telnet entrant** pour piloter le moniteur depuis le PC, et `load`/`save` réseau. | À faire |
 | US-T8 | P3 | En tant qu'utilisateur, je veux un partage de fichiers réseau vers la SD/les images (Samba sur le Pi Zero W), afin de déposer des programmes sans manipuler la carte. | À faire |
+| US-T11 | P2 | En tant que développeur, je veux un **mode « flux HTTP »** sur le proxy de sockets (US-T3) du modem : `open(url)` effectue le GET (Host, Range optionnel) et renvoie code + Content-Length, puis `read(n)` sert le corps (l'en-tête reste dans le modem) ; `HTTPS://` via le TLS embarqué. Base du périphérique réseau `N:` (mémo `docs/MEMO-PROPHET-N-DEVICE-2026-09-16.md`). | À faire — dépend de US-T3 |
+| US-T12 | P1 | En tant qu'utilisateur, je veux une **liste d'hôtes autorisés / un journal** côté modem (`AT+NHOSTS=…`) pour le mode `N:`, afin qu'un `.neo` malveillant ne puisse pas exfiltrer le stockage vers un hôte arbitraire ; à croiser avec l'audit `neo-sandbox`. **Prérequis sécurité de `N:`.** | À faire — avant toute écriture réseau via `N:` |
 
-Ordre : US-T0/T1/T2 (sprint 1, Pico W) → US-T3/T4 → T5/T6 → T7/T8. Transport
+Ordre : US-T0/T1/T2 (sprint 1, Pico W) → US-T3/T4 → T5/T6 → T7/T8. Périphérique
+réseau `N:` (façon FujiNet, mémo Neo6502Prophet) : côté modem US-T11 (flux HTTP)
++ US-T12 (sécurité hôtes) ; côté firmware, le préfixe `N:` dans le groupe 3 est
+une story du fork **Neo6502firmware** (lecture seule d'abord : 3,2/3,4/3,8/3,5/3,16
+routés vers le proxy du modem). Le serveur Prophet n'a rien à changer. Transport
 UART UEXT immédiat, transport CDC USB dès que F-13 (Neo6502firmware) est
 livrée. Limites connues du firmware Pico W : TLS 1.2 seulement (pas de 1.3, pas de
 certificat client), pas d'UDP, une connexion (`CIPMUX=0`), pas d'OTA.
