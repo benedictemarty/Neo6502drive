@@ -21,15 +21,18 @@ binaires `.neo` d'origine, **non recompilés**.
 |---|---|---|
 | `netinfo.neo` | **OK** | Écran : « Station Mode », « AP connected (IP obtained) ». Dialogue AT correct : `ATE0`, `AT+CWMODE?`→`+CWMODE:1`, `AT+CIPSTATUS`→`STATUS:2`, `AT+CWJAP_CUR?` (SSID/BSSID/canal/RSSI), `AT+CIPSTA_CUR?` (ip/gw/masque), `AT+CIPDNS_CUR?`. |
 | `netconsole.neo` | **OK** | Console AT interactive ; `AT+GMR` tapé → relayé au modem → « AT version:1.7.4.0(Neo6502drive) / SDK version:0.2.0 / … / OK » affiché. |
-| `prophet.neo` | **partiel** | Démarre, `ATE0`→`OK`, puis `AT+CIPSTART="TCP","mimuma.pl",8998`. Le modem exécute la commande ; le port **8998 est injoignable depuis ce réseau** (le PC non plus n'y accède pas) → « Error connecting server ». Côté modem/routage : conforme ; échec purement réseau, hors de notre contrôle. |
+| `prophet.neo` (mimuma.pl) | réseau | `ATE0`→`OK`, `AT+CIPSTART="TCP","mimuma.pl",8998` : port **8998 injoignable depuis ce réseau** (le PC non plus). |
+| `prophet.neo` (3617.fr) | **transport OK, serveur 400** | Config pré-remplie sur `3617.fr:8998` : le modem **se connecte** (`CONNECT`), envoie la requête et reçoit `+IPD` — la chaîne 6502→modem→serveur fonctionne. Le serveur (**Caddy**) répond **HTTP 400** car prophet émet une ligne de requête `GET … HTTP/1.1 ` avec un **espace en trop** (bug de `http.inc`). Vérifié : requête *propre* → **200 OK**, requête *avec l'espace* → **400**, aussi bien en `nc` depuis le PC qu'en envoyant la requête propre **par le modem** (`AT+CIPSTART`/`CIPSEND` vers 3617.fr → `HTTP/1.1 200 OK, Server: Caddy`). |
 
 ## Conclusion
 
 Le routage F-93 permet aux outils communautaires de parler au modem USB sans
-modification (netinfo et netconsole complets). Un `get` Prophet réel demande un
-serveur Prophet joignable (port 8998 bloqué ici ; test de bout en bout à
-refaire avec le serveur HTTPS de Neo6502Prophet, cf.
-`docs/MEMO-PROPHET-picowifitls-reponse.md`).
+modification (netinfo et netconsole complets). Le modem atteint un vrai serveur Prophet (`3617.fr:8998`, Caddy) et en reçoit
+`200 OK` sur une requête propre. Le seul obstacle à un `get` prophet complet
+est **l'espace en trop dans la ligne de requête de prophet** (`http.inc`),
+que Caddy rejette par un 400 : soit corriger prophet, soit placer devant le
+serveur un proxy tolérant. Point déjà signalé au projet Neo6502Prophet
+(`docs/MEMO-PROPHET-picowifitls-reponse.md`, §3).
 
 Sur un Neo6502 **réel** : flasher le firmware du fork (F-93) et brancher un hub
 USB (clavier + Pico W). Le comportement doit être identique.
