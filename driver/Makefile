@@ -7,7 +7,7 @@ LD65   = ld65
 CAFLAGS = --cpu 65C02 -I src
 CFG    = cfg/neo.cfg
 BUILD  = build
-PROGS  = $(BUILD)/term.bin $(BUILD)/modemtest.bin
+PROGS  = $(BUILD)/term.bin $(BUILD)/modemtest.bin $(BUILD)/uarttest.bin
 
 all: $(PROGS)
 
@@ -26,10 +26,12 @@ $(BUILD)/%.bin: $(BUILD)/%.o $(BUILD)/cdc.o $(CFG)
 test: all
 	bash tests/test_term.sh
 	bash tests/test_modem_cdc.sh
+	bash tests/test_uart_route.sh
 
 test-hw: all
 	MODEM_TTY=$${MODEM_TTY:-/dev/ttyACM0} bash tests/test_term.sh
 	MODEM_TTY=$${MODEM_TTY:-/dev/ttyACM0} bash tests/test_modem_cdc.sh
+	MODEM_TTY=$${MODEM_TTY:-/dev/ttyACM0} bash tests/test_uart_route.sh
 
 clean:
 	rm -rf $(BUILD)

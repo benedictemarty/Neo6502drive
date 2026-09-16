@@ -16,6 +16,8 @@ src/cdc.s/.inc    bibliothèque : accès CDC (14,1..14,6) + couche modem AT
 examples/term.s   terminal série interactif (clavier <-> modem) — US-T9
 examples/modemtest.s  test scénarisé : ATI, AT+CIFSR, requête HTTPS via
                   AT+TLSPORT=443, affichage de la réponse déchiffrée
+examples/uarttest.s   preuve du routage UART->CDC (F-93) : n'utilise que
+                  l'API UART UEXT (10,15..18), comme netsetup/prophet
 cfg/neo.cfg       configuration ld65 (binaire brut chargé à $0800)
 tests/            tests Phosphoneo (faux modem sans matériel, ou vrai Pico W)
 ```
