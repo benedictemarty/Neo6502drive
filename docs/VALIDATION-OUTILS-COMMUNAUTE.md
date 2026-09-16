@@ -22,17 +22,25 @@ binaires `.neo` d'origine, **non recompilés**.
 | `netinfo.neo` | **OK** | Écran : « Station Mode », « AP connected (IP obtained) ». Dialogue AT correct : `ATE0`, `AT+CWMODE?`→`+CWMODE:1`, `AT+CIPSTATUS`→`STATUS:2`, `AT+CWJAP_CUR?` (SSID/BSSID/canal/RSSI), `AT+CIPSTA_CUR?` (ip/gw/masque), `AT+CIPDNS_CUR?`. |
 | `netconsole.neo` | **OK** | Console AT interactive ; `AT+GMR` tapé → relayé au modem → « AT version:1.7.4.0(Neo6502drive) / SDK version:0.2.0 / … / OK » affiché. |
 | `prophet.neo` (mimuma.pl) | réseau | `ATE0`→`OK`, `AT+CIPSTART="TCP","mimuma.pl",8998` : port **8998 injoignable depuis ce réseau** (le PC non plus). |
-| `prophet.neo` (3617.fr) | **transport OK, serveur 400** | Config pré-remplie sur `3617.fr:8998` : le modem **se connecte** (`CONNECT`), envoie la requête et reçoit `+IPD` — la chaîne 6502→modem→serveur fonctionne. Le serveur (**Caddy**) répond **HTTP 400** car prophet émet une ligne de requête `GET … HTTP/1.1 ` avec un **espace en trop** (bug de `http.inc`). Vérifié : requête *propre* → **200 OK**, requête *avec l'espace* → **400**, aussi bien en `nc` depuis le PC qu'en envoyant la requête propre **par le modem** (`AT+CIPSTART`/`CIPSEND` vers 3617.fr → `HTTP/1.1 200 OK, Server: Caddy`). |
+| `prophet.neo` (3617.fr) | **OK de bout en bout** | Config pré-remplie sur `3617.fr:8998` : « Server connected », « Prophet server version: 0.7.0 », puis `list` → **catalogue affiché** (« Total: 43, Page 1/3 », aerial/antiair/…/frogger) et `cat` → catégories (games 37, tools 5, other 1). Boucle réelle 6502 (Phosphoneo, vrai firmware) → routage F-93 → modem USB Pico W → 3617.fr. Le serveur Prophet a été rendu tolérant à l'espace en trop de `http.inc` (relais layer4 + prophetd 0.7.0) après signalement ; auparavant il renvoyait 400 (Caddy strict), reproduit en `nc` et par le modem. |
 
 ## Conclusion
 
 Le routage F-93 permet aux outils communautaires de parler au modem USB sans
-modification (netinfo et netconsole complets). Le modem atteint un vrai serveur Prophet (`3617.fr:8998`, Caddy) et en reçoit
-`200 OK` sur une requête propre. Le seul obstacle à un `get` prophet complet
-est **l'espace en trop dans la ligne de requête de prophet** (`http.inc`),
-que Caddy rejette par un 400 : soit corriger prophet, soit placer devant le
-serveur un proxy tolérant. Point déjà signalé au projet Neo6502Prophet
-(`docs/MEMO-PROPHET-picowifitls-reponse.md`, §3).
+modification (netinfo et netconsole complets). **Boucle télécom complète prouvée** : `prophet.neo` non modifié, sur le 6502
+(Phosphoneo + vrai firmware), liste le catalogue de `3617.fr:8998` via le modem
+Wi-Fi Pico W en USB (routage F-93). Le serveur Prophet a été rendu tolérant à
+l'espace en trop de `http.inc` (signalement §3 du mémo).
+
+Réserve : dans l'émulateur headless (plus rapide que le temps réel), le délai
+de lecture de prophet — compté en trames — expire parfois avant la réponse du
+modem (~0,3 s réelles) → « No result » intermittent, alors que le tap montre la
+liste complète reçue par le 6502. Sur un Neo6502 réel (6,25 MHz, temps réel),
+non concerné. Limite restante côté serveur : `prophet.neo` + `AT+TLSPORT=443`
+→ 400 (Caddy termine le TLS et analyse l'HTTP) ; passthrough SNI layer4 au
+backlog de Neo6502Prophet. Les clients propres (ProphetGui, curl) passent en
+443, et le TLS du Pico W est validé par ProphetGui (handshake 4,4 s, reprise
+0,35–0,85 s, certificat vérifié).
 
 Sur un Neo6502 **réel** : flasher le firmware du fork (F-93) et brancher un hub
 USB (clavier + Pico W). Le comportement doit être identique.
