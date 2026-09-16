@@ -4,3 +4,4 @@ build/
 *.map
 *.uf2
 *.elf
+build/

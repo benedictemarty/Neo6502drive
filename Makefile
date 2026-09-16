@@ -7,24 +7,24 @@
 PICO_SDK_PATH ?= $(HOME)/pico-sdk-internal
 export PICO_SDK_PATH
 
-test:
-	$(MAKE) -C firmware/picow-modem/tests test
-	$(MAKE) -C driver test
+test: test-firmware test-driver
 
-term:
+test-firmware:
+	$(MAKE) -C firmware/picow-modem/tests test
+
+# driver 6502 (ca65) : bibliothèque CDC groupe 14, terminal et test HTTPS
+driver:
 	$(MAKE) -C driver
 
-firmware:
-	cmake -S firmware/picow-modem -B firmware/picow-modem/build -DCMAKE_BUILD_TYPE=Release
-	cmake --build firmware/picow-modem/build -j
+test-driver:
+	$(MAKE) -C driver test
 
-flash: firmware
-	@dst=$$(ls -d /media/*/RPI-RP2 /run/media/*/RPI-RP2 2>/dev/null | head -1); \
-	if [ -z "$$dst" ]; then echo "Aucun volume RPI-RP2 : brancher le Pico W en maintenant BOOTSEL"; exit 1; fi; \
-	cp firmware/picow-modem/build/picow_modem.uf2 "$$dst/" && echo "Flashé sur $$dst"
+test-driver-hw:
+	$(MAKE) -C driver test-hw
 
 clean:
 	$(MAKE) -C firmware/picow-modem/tests clean
+	$(MAKE) -C driver clean
 	rm -rf firmware/picow-modem/build
 
-.PHONY: test firmware flash clean
+.PHONY: test test-firmware test-driver test-driver-hw driver firmware flash clean
