@@ -59,3 +59,7 @@ hardware/              câblage UEXT <-> Pico W / Feather, nomenclature
 ## Licence
 
 [EUPL v1.2](LICENSE) (European Union Public Licence) — © 2026 bmarty.
+
+## Avertissement
+
+⚠️ Avertissement : ce programme est un programme généré par Claude Code sous la supervision d'un être humain : il a été utilisé pour améliorer, développer, rendre compatible ou traduire ce logiciel.
